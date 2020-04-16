@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>代理管理</title>
+</head>
+<body>
+    <script>
+        function delproxy(name){
+            var url = "http://192.168.1.157:5001/proxy/del/"+name
+            var request = new XMLHttpRequest();
+            flag = confirm("确认要删除"+name+'?')
+            if(flag){
+                request.open("get", url);
+                request.send()
+                window.location.reload()
+            }
+        }
+        function reload(){
+            window.location.reload()
+        }
+    </script>
+
+    <table cellpadding="10" width="500">
+        <tr>
+            <th align=left>队列名称</th>
+            <th align=left>个数</th>
+            <th align=left>删除</th>
+        </tr>
+
+    {% for k,v in proxyinfo.items() %}
+        <tr>
+            <td>{{k}}</td>
+            <td>{{v}}</td>
+            <td><button onclick=delproxy('{{k}}')  type="button">del</button></td>
+        </tr>
+    {% endfor %}
+    </table>
+
+<hr>
+    <form method="post">
+        {{ form.csrf_token() }}
+        {{ form.name.label }} {{ form.name }}
+        {{ form.submit }}
+    </form>
+
+    <div style="padding-left:1200;"><button onclick=reload() type="button">刷新</button></div>
+    <p>系统提示：</p>
+    <li>测试使用test_proxy队列。队列名：项目名+_proxy</li>
+    <li>redis集合ProxyName存储所有队列的名称</li>
+    {% with messages = get_flashed_messages() %}
+        {% for mess in messages %}
+            <li style="color:red">{{ mess }}</li>
+        {% endfor %}
+    {% endwith %}
+
+</body>
+</html>
